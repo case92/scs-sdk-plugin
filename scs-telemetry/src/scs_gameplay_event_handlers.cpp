@@ -11,6 +11,11 @@ extern SharedMemory* telem_mem;
 extern scsTelemetryMap_t* telem_ptr;
 extern void set_job_values_zero();
 
+extern scs_timestamp_t simulatedtimestamp;
+extern scs_timestamp_t job_cancelled_penalty_timer_expire;
+
+//TIMER 
+
 #pragma region scsGameplayEventHandler_t[]
 
 // const: cancelled_gameplay
@@ -127,6 +132,7 @@ bool handleGpe(const scs_named_value_t* info, const gameplayType type) {
 // The penalty for cancelling the job in native game currency. (Can be 0)
 scsGameplayEventHandle(Cancelled, Penalty) {
     telem_ptr->gameplay_ll.jobCancelledPenalty = current->value.value_s64.value;
+    job_cancelled_penalty_timer_expire = simulatedtimestamp + 2000000;
 }
 
 #pragma endregion All handler of the id job.cancelled

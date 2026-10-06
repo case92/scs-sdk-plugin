@@ -258,6 +258,8 @@ scs_timestamp_t fine_timer_expire = 0;
 scs_timestamp_t ferry_timer_expire = 0;
 scs_timestamp_t train_timer_expire = 0;
 scs_timestamp_t tollgate_timer_expire = 0;
+scs_timestamp_t job_cancelled_penalty_timer_expire = 0;
+scs_timestamp_t job_cancelled_timer_expire = 0;
 
 scs_timestamp_t last_timestamp = static_cast<scs_timestamp_t>(-1);
 scs_timestamp_t last_simulatedtimestamp = static_cast<scs_timestamp_t>(-1);
@@ -322,6 +324,12 @@ SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event),
         last_timestamp = 0;
         last_simulatedtimestamp = 0;
         last_rendertimestamp = 0;
+    }
+    if (telem_ptr->gameplay_ll.jobCancelledPenalty != 0 && simulatedtimestamp >= job_cancelled_penalty_timer_expire) {
+        telem_ptr->gameplay_ll.jobCancelledPenalty = 0;
+    }
+    if (telem_ptr->special_b.jobCancelled && simulatedtimestamp >= job_cancelled_timer_expire) {
+        telem_ptr->special_b.jobCancelled = false;
     }
 
     timestamp += info->paused_simulation_time - last_timestamp;
@@ -420,6 +428,7 @@ SCSAPI_VOID telemetry_gameplay(const scs_event_t event,
     if (strcmp(info->id, SCS_TELEMETRY_GAMEPLAY_EVENT_job_cancelled) == 0) {
         type = cancelled;
         telem_ptr->special_b.jobCancelled = true;
+        job_cancelled_timer_expire = simulatedtimestamp + 2000000;
         telem_ptr->gameplay_ui.jobFinishedTime = telem_ptr->common_ui.time_abs;
         telem_ptr->special_b.onJob = false;
         telem_ptr->special_b.jobFinished ^= true;
@@ -436,7 +445,7 @@ SCSAPI_VOID telemetry_gameplay(const scs_event_t event,
     else if (strcmp(info->id, SCS_TELEMETRY_GAMEPLAY_EVENT_player_fined) == 0) {
         type = fined;
         telem_ptr->special_b.fined = true;
-        fine_timer_expire = simulatedtimestamp + 2000000; // 2 secondes (2 000 000 µs)
+        fine_timer_expire = simulatedtimestamp + 2000000;
     }
     else if (strcmp(info->id, SCS_TELEMETRY_GAMEPLAY_EVENT_player_tollgate_paid) == 0) {
         type = tollgate;
@@ -537,6 +546,7 @@ SCSAPI_VOID telemetry_configuration(const scs_event_t event,
 
     if (type == job && is_empty && telem_ptr->special_b.onJob) {
         telem_ptr->special_b.onJob = false;
+        telem_ptr->special_b.jobCancelled = false;
         telem_ptr->special_b.jobFinished ^= true;
     }
     else if (!telem_ptr->special_b.onJob && type == job && !is_empty) {
