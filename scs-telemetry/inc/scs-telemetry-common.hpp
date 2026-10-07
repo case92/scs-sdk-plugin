@@ -7,7 +7,7 @@
 // - Shared memory map struct layout
 // - [..]
 
-#define PLUGIN_REVID					12
+#define PLUGIN_REVID					13
 
 #define ETS2                            1
 #define ATS                             2
@@ -37,6 +37,27 @@
   // macro: SUBSTANCE_SIZE
   // The maximum number of substances that are saved to the memory
 #define SUBSTANCE_SIZE 25
+
+#define GENERIC_TEXT_SIZE 64
+#define BUS_JOB_ATTRIBUTE_CAPACITY 32
+#define OTHER_CONFIG_ATTRIBUTE_CAPACITY 8
+#define OTHER_EVENT_ATTRIBUTE_CAPACITY 12
+
+typedef struct scsGenericAttribute_s { // Size: 136
+	unsigned int index;
+	unsigned int type;
+	char name[GENERIC_TEXT_SIZE];
+	char value[GENERIC_TEXT_SIZE];
+} scsGenericAttribute_t;
+
+template <unsigned int Capacity>
+struct scsGenericBlock_t {
+	unsigned int sequence;
+	unsigned int count;
+	unsigned int stored;
+	char id[GENERIC_TEXT_SIZE];
+	scsGenericAttribute_t attributes[Capacity];
+};
 
 bool check_min_version(unsigned const int min_ets2, unsigned const int min_ats);
 bool check_max_version(unsigned const int min_ets2, unsigned const int min_ats);
@@ -547,7 +568,71 @@ typedef struct scsTelemetryMap_s
 		scsTrailer_t trailer[10];
 	}trailer;
 
-	//----- END OF 14TH ZONE AT OFFSET 21619 -----//
+	//----- END OF 14TH ZONE AT OFFSET 21599 -----//
+	char buffer_trailer[400];
+
+	//----- START OF 15TH ZONE AT OFFSET 22000 -----//
+	// SDK 1.15: car jobs, new channels and unknown configs/events as text.
+	// Offsets are pinned by static_asserts in scs_sdk115.cpp.
+
+	struct {
+		unsigned long long income;
+		long long deliveredRevenue;
+		long long cancelledPenalty;
+	} carJob_ll;
+
+	struct {
+		unsigned int unitCount;
+		unsigned int deliveryTime;
+		unsigned int plannedDistanceKm;
+		unsigned int startingTime;
+		unsigned int finishedTime;
+		// Arrival time, not a duration as the SDK documents
+		unsigned int deliveredDeliveryTime;
+		int deliveredEarnedXp;
+		float deliveredCargoDamage;
+		float deliveredVehicleDamage;
+		float deliveredDistanceKm;
+	} carJob_i;
+
+	struct {
+		bool onCarJob;
+		bool carJobFinished;
+		bool carJobCancelled;
+		bool carJobDelivered;
+		bool customerPrioCargoHandling;
+		bool customerPrioTime;
+		bool customerPrioVehicleAppearance;
+		char placeHolder;
+	} carJob_b;
+
+	struct {
+		char cargoId[stringsize];
+		char cargo[stringsize];
+		char cityDstId[stringsize];
+		char cityDst[stringsize];
+		char compDstId[stringsize];
+		char compDst[stringsize];
+		char citySrcId[stringsize];
+		char citySrc[stringsize];
+		char compSrcId[stringsize];
+		char compSrc[stringsize];
+		char market[32];
+	} carJob_s;
+
+	struct {
+		int mandatoryBreak;
+		float busJobAverageSatisfaction;
+		bool mandatoryBreakRegistered;
+		bool mandatoryBreakHasValue;
+		bool busJobAverageSatisfactionRegistered;
+		bool busJobAverageSatisfactionHasValue;
+	} sdk115_channels;
+
+	scsGenericBlock_t<BUS_JOB_ATTRIBUTE_CAPACITY> busJobConfig;
+	scsGenericBlock_t<OTHER_CONFIG_ATTRIBUTE_CAPACITY> otherConfig;
+	scsGenericBlock_t<OTHER_EVENT_ATTRIBUTE_CAPACITY> otherGameplayEvent;
+	//----- END OF 15TH ZONE AT OFFSET 30055 -----//
 } scsTelemetryMap_t;
 
 #endif

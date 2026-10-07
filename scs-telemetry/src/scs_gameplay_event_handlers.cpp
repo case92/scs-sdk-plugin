@@ -14,7 +14,6 @@ extern void set_job_values_zero();
 extern scs_timestamp_t simulatedtimestamp;
 extern scs_timestamp_t job_cancelled_penalty_timer_expire;
 
-//TIMER 
 
 #pragma region scsGameplayEventHandler_t[]
 
@@ -71,12 +70,12 @@ const scsGameplayEventHandler_t train_gameplay[] = {
 };
 
 const int length_gameplays[] = {
-    sizeof cancelled_gameplay / sizeof * cancelled_gameplay,
-    sizeof delivered_gameplay / sizeof * delivered_gameplay,
-    sizeof fined_gameplay / sizeof * fined_gameplay,
-    sizeof tollgate_gameplay / sizeof * tollgate_gameplay,
-    sizeof ferry_gameplay / sizeof * ferry_gameplay,
-    sizeof train_gameplay / sizeof * train_gameplay
+    sizeof cancelled_gameplay / sizeof*cancelled_gameplay,
+    sizeof delivered_gameplay / sizeof*delivered_gameplay,
+    sizeof fined_gameplay / sizeof*fined_gameplay,
+    sizeof tollgate_gameplay / sizeof*tollgate_gameplay,
+    sizeof ferry_gameplay / sizeof*ferry_gameplay,
+    sizeof train_gameplay / sizeof*train_gameplay
 };
 #pragma endregion Contains all handler arrays
 
@@ -92,7 +91,7 @@ bool handleGpe(const scs_named_value_t* info, const gameplayType type) {
         break;
     case delivered:
         gameplay = delivered_gameplay;
-        set_job_values_zero();
+         set_job_values_zero();
         break;
     case fined:
         gameplay = fined_gameplay;
@@ -110,7 +109,7 @@ bool handleGpe(const scs_named_value_t* info, const gameplayType type) {
         // something went wrong
         return false;
     }
-
+   
     for (auto index = 0; index < length_gameplays[type]; index++) {
         if (strcmp(gameplay->id, info->name) == 0) {
             if (telem_ptr) {
@@ -134,6 +133,7 @@ scsGameplayEventHandle(Cancelled, Penalty) {
     telem_ptr->gameplay_ll.jobCancelledPenalty = current->value.value_s64.value;
     job_cancelled_penalty_timer_expire = simulatedtimestamp + 2000000;
 }
+
 
 #pragma endregion All handler of the id job.cancelled
 
@@ -194,6 +194,8 @@ scsGameplayEventHandle(Delivered, AutoloadUsed) {
 scsGameplayEventHandle(Fined, FineOffence) {
     strncpy(telem_ptr->gameplay_s.fineOffence, current->value.value_string.value, 32);
 }
+
+
 
 // Function: handleFinedFineAmount
 // Fine offence amount in native game currency.
@@ -287,4 +289,4 @@ scsGameplayEventHandle(Train, TargetId) {
 }
 
 
-#pragma endregion All handler of the id player.use.train
+#pragma endregion All handler of the id player.use.ferry

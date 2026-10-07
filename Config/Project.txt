@@ -41,16 +41,10 @@ Timestamp: dd.mm.yyyy
 # Source Code
 # ------------------------------------------------------------------------
 
-Source Folder: ..\scs-client\C#\SCSSdkClient
-   Name: SCSSdkClient
-
-Source Folder 2: ..\scs-client\C#\SCSSdkClient.Demo
-   Name: SCSSdkClient.Demo
-
-Source Folder 3: ..\scs-telemetry
+Source Folder: ..\scs-telemetry
    Name: SCSTelemetry
 
-Source Folder 4: ..\guides
+Source Folder 2: ..\guides
    Name: Guides
 
 

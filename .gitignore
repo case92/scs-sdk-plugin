@@ -6,7 +6,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.cmd
 
 # Compiled Static libraries
 *.lai
@@ -203,4 +202,3 @@ $RECYCLE.BIN/
 
 
 Working Data/
-update GIT.cmd
