@@ -19,7 +19,7 @@ echo [2/3] Verification et synchronisation avec GitHub...
 git pull origin dev --force
 
 echo [3/3] Envoi final sur GitHub...
-git push origin main
+git push origin dev
 
 echo.
 echo ========================================
