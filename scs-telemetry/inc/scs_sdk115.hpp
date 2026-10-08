@@ -3,7 +3,7 @@
 
 #include "scssdk_telemetry.h"
 
-#define TSGPS_CHANNEL_bus_job_average_satisfaction "bus_job.average_satisfaction"
+#define CS92_CHANNEL_bus_job_average_satisfaction "bus_job.average_satisfaction"
 
 void sdk115_register_channels(const scs_telemetry_init_params_v101_t* params);
 

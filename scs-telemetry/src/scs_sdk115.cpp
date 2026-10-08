@@ -170,7 +170,7 @@ void sdk115_register_channels(const scs_telemetry_init_params_v101_t* params) {
   }
   if (check_min_version(20, 7)) {
     channels.busJobAverageSatisfactionRegistered =
-        params->register_for_channel(TSGPS_CHANNEL_bus_job_average_satisfaction, SCS_U32_NIL, SCS_VALUE_TYPE_float,
+        params->register_for_channel(CS92_CHANNEL_bus_job_average_satisfaction, SCS_U32_NIL, SCS_VALUE_TYPE_float,
                                      SCS_TELEMETRY_CHANNEL_FLAG_no_value, store_bus_job_average_satisfaction,
                                      nullptr) == SCS_RESULT_ok;
   }
